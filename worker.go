@@ -44,7 +44,7 @@ func (gw GenericWorker) Start() {
 				fmt.Printf("Stopping worker: \t%d\n", gw.ID)
 				return
 			default:
-				time.Sleep(10 * time.Millisecond)
+				time.Sleep(100 * time.Millisecond)
 				fmt.Print(".")
 			}
 		}

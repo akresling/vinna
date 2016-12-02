@@ -45,7 +45,6 @@ func (p *WorkerPool) StartAllWorkers() {
 	for i := 1; i <= p.initNumWorker; i++ {
 		p.AddWorker(i)
 	}
-	debug(p.workers)
 	p.running = true
 	go p.ManageWorkers()
 }
@@ -73,8 +72,8 @@ func (p *WorkerPool) AddWorker(id int) {
 }
 
 // DropWorker will stop a worker  and remove it from the pool
-func (p WorkerPool) DropWorker() {
-	if p.nWorkers == p.initNumWorker {
+func (p *WorkerPool) DropWorker() {
+	if p.nWorkers == 1 {
 		return
 	}
 	w := p.workers[len(p.workers)-1]
@@ -88,13 +87,13 @@ func (p *WorkerPool) ManageWorkers() {
 	for {
 		select {
 		case <-time.Tick(50 * time.Millisecond):
-			debugChannel(p.Jobs)
-			if len(p.Jobs) > cap(p.Jobs)/2 {
-				fmt.Println("ADDING WORKER")
+			if len(p.Jobs) > cap(p.Jobs)/5 {
 				p.AddWorker(p.nWorkers + 1)
+			} else if len(p.Jobs) < cap(p.Jobs)/10 {
+				p.DropWorker()
 			}
 		case <-p.sigStop:
-			fmt.Println("STOPPING")
+			fmt.Println("STOPPING MANAGER")
 			return
 		}
 	}

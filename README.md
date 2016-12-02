@@ -4,6 +4,8 @@ Vinna is a Go implementation of a work queue with a manager for the worker pool.
 
 In order to use the worker pool it is necessary to implement the Work interface and pass the channel of Work to the WorkerPool
 
+The current version will both add and remove workers based on the volume of work in the channel. A worker wil be added if the volume of the channel buffer is above 20% of the total capacity. A worker will be removed if the volume drops below 10% of the total capacity. In future versions most of this will be configurable.
+
 #### Worker Interface
 ```go
 // Work is the base interface for the jobs to be done by our Workers.
